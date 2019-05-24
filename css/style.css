@@ -1,0 +1,13 @@
+.welcome-header {
+    background-image: url(../material-kit/assets/img/bg2.jpg);
+    transform: translate3d(0px, 0px, 0px);
+}
+
+.img-card-responsive {
+    width: auto;
+    height: 220px;
+}
+
+.like {
+
+}
