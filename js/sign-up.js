@@ -1,16 +1,16 @@
 $('#sign-up-btn').click(function () {
-    var email = $("input[name='email']").val();
-    var password = $("input[name='password']").val();
+    let email = $("input[name='email']").val();
+    let password = $("input[name='password']").val();
     console.log('Email: ' + email);
     console.log('Password: ' + password);
 
     signUpCall(email, password,
-        function (data) {
+        (data) => {
             console.log(data);
             alert('Check your email ' + data['email']);
             window.location.replace("../html/sign-in.html");
         },
-        function (err) {
+        (err) => {
             console.log(err);
             alert('Status: ' + err.status + ' response: ' + err.responseText);
         }

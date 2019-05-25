@@ -1,3 +1,13 @@
+$('#lessons-container').on('click', '.like-icons', (e) => {
+    let id = getLessonId(e);
+    alert(id);
+});
+
+$('#lessons-container').on('click', '.edit-icons', (e) => {
+    let id = getLessonId(e);
+    alert(id);
+});
+
 loadLessonsPage();
 
 $(window).scroll(function () {
@@ -19,6 +29,7 @@ function loadLessonsPage(url) {
             lessons.forEach((lesson) => {
                 // console.log(lesson);
                 addLessonRow(
+                    lesson['id'],
                     lesson['title'],
                     lesson['user']['email'],
                     lesson['likes_count'],
@@ -34,11 +45,11 @@ function loadLessonsPage(url) {
     });
 }
 
-function addLessonRow(title, user, likes_count, like, mine) {
+function addLessonRow(lessonId, title, user, likesCount, like, mine) {
     let lessons = document.getElementById('lessons-container');
     let div = document.createElement('div');
     div.className = 'card';
-    div.innerHTML = buildCard(title, user, likes_count, like, mine);
+    div.innerHTML = buildCard(lessonId, title, user, likesCount, like, mine);
     lessons.appendChild(div);
 }
 
@@ -54,28 +65,34 @@ function optionalJWT() {
     return {}
 }
 
-function buildCard(title, user, likes_count, like, mine) {
-    console.log(like, mine);
+function buildCard(lessonId, title, user, likesCount, like, mine) {
     let titleHTML = `<div class="card-body ">
                         <h4 class="card-title">
                             <a href="#">${title}</a>
                         </h4>
                     </div>`;
 
-    let editHTML = `${mine ? '<i id="edit-icon" class="material-icons noselect">edit</i>': ''}`;
-    let likeHTML = `<i id="like-icon" class="material-icons noselect ${like ? 'primary-purple' : ''}">favorite</i> ${likes_count}`
+    let editHTML = `${mine ? `<i id="edit-icon_${lessonId}" class="edit-icons material-icons">edit</i>` : ''}`;
+    let likeHTML = `<i id="{like-icon_${lessonId}" 
+                        class="like-icons material-icons ${like ? 'primary-purple' : ''}">favorite</i> ${likesCount}`;
     let stats = editHTML + likeHTML;
 
     return titleHTML +
-            `<div class="card-footer ">
+        `<div class="card-footer ">
                 <div class="author">
                     <a href="#">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/6/67/User_Avatar.png" alt="avatar" class="avatar img-raised">
                         <span>${user}</span>
                     </a>
                 </div>
-                <div class="stats ml-auto">
+                <div class="stats ml-auto noselect">
                     ${stats}
                 </div>
             </div>`;
+}
+
+
+function getLessonId(e) {
+    [_, id] = e.target.id.split('_');
+    return id
 }
