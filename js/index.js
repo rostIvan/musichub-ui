@@ -8,7 +8,9 @@ $(window).scroll(function () {
 
 $('#lessons-container').on('click', '.like-icons', (e) => {
     let id = getLessonId(e);
-    likeToggle(id)
+    if (id != null) {
+        likeToggle(id)
+    }
 });
 
 $('#lessons-container').on('click', '.edit-icons', (e) => {
@@ -18,15 +20,17 @@ $('#lessons-container').on('click', '.edit-icons', (e) => {
 
 
 function addLike(id) {
-    let selector = `#like-icon_${id}`;
-    console.log(selector);
-    $(selector).addClass('primary-purple');
-    console.log('add')
+    $(`#like-icon_${id}`).addClass('primary-purple');
+    let likesCount = $(`#likes-count_${id}`);
+    let count = Number(likesCount.text());
+    likesCount.text(count + 1)
 }
 
 function removeLike(id) {
     $(`#like-icon_${id}`).removeClass('primary-purple');
-    console.log('remove')
+    let likesCount = $(`#likes-count_${id}`);
+    let count = Number(likesCount.text());
+    likesCount.text(count - 1)
 }
 
 function likeToggle(id) {
@@ -91,19 +95,20 @@ function optionalJWT() {
 }
 
 function buildCard(lessonId, title, user, likesCount, like, mine) {
-    let titleHTML = `<div class="card-body ">
-                        <h4 class="card-title">
-                            <a href="#">${title}</a>
-                        </h4>
-                    </div>`;
+    let editHTML ='<div class="edit-icons">' +
+                        `${mine ? `<i id="edit-icon_${lessonId}" class="material-icons">edit</i>` : ''}` +
+                    '</div>';
+    let likeHTML = `<div class="like-icons">` +
+                        `<i id="like-icon_${lessonId}" class="material-icons ${like ? 'primary-purple' : ''}">favorite</i>
+                            <span id="likes-count_${lessonId}"> ${likesCount} </span>` +
+                    '</div>';
 
-    let editHTML = `${mine ? `<i id="edit-icon_${lessonId}" class="edit-icons material-icons">edit</i>` : ''}`;
-    let likeHTML = `<i id="like-icon_${lessonId}" 
-                        class="like-icons material-icons ${like ? 'primary-purple' : ''}">favorite</i> ${likesCount}`;
-    let stats = editHTML + likeHTML;
-
-    return titleHTML +
-        `<div class="card-footer ">
+    return `<div class="card-body ">
+                <h4 class="card-title">
+                    <a href="#">${title}</a>
+                </h4>
+            </div>
+            <div class="card-footer ">
                 <div class="author">
                     <a href="#">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/6/67/User_Avatar.png" alt="avatar" class="avatar img-raised">
@@ -111,7 +116,7 @@ function buildCard(lessonId, title, user, likesCount, like, mine) {
                     </a>
                 </div>
                 <div class="stats ml-auto noselect">
-                    ${stats}
+                    ${editHTML + likeHTML}
                 </div>
             </div>`;
 }
