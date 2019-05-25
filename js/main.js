@@ -4,6 +4,15 @@ let isAuth = isAuthenticated();
 console.log(`base url = ${baseUrl}`);
 console.log(`is auth = ${isAuth}`);
 
+$(document).ready(function () {
+    const MINUTES = 60 * 1000;
+    if (hasRefreshToken()) {
+        setInterval(function () {
+            updateAccessToken();
+        }, 3 * MINUTES);
+    }
+});
+
 if (isAuth) {
     $('#authorized-navbar').show();
     $('#unauthorized-navbar').hide()
@@ -128,14 +137,6 @@ function updateAccessToken() {
         }
     });
 }
-
-$(document).ready(function () {
-    if (hasRefreshToken()) {
-        setInterval(function () {
-            updateAccessToken();
-        }, 3 * 1000);
-    }
-});
 
 function isAuthenticated() {
     let access = localStorage.getItem('access-token');
