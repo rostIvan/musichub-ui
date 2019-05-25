@@ -1,5 +1,5 @@
-let baseUrl = 'http://localhost:8000/';
-let tokenUrl = baseUrl + 'auth/token/';
+let baseUrl = 'http://localhost:8000';
+let tokenUrl = baseUrl + '/auth/token';
 let isAuth = isAuthenticated();
 console.log(`base url = ${baseUrl}`);
 console.log(`is auth = ${isAuth}`);
@@ -34,10 +34,10 @@ $('#logout').click(() => {
 
 
 function obtainToken(email, password, request) {
-    var onSuccess = request['success'];
+    let onSuccess = request['success'];
     $.ajax({
         type: "POST",
-        url: tokenUrl + 'obtain/',
+        url: `${tokenUrl}/obtain/`,
         data: JSON.stringify({'email': email, 'password': password}),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -53,7 +53,7 @@ function refreshAccessToken(refresh, request) {
     let onSuccess = request['success'];
     $.ajax({
         type: "POST",
-        url: tokenUrl + 'refresh/',
+        url: `${tokenUrl}/refresh/`,
         data: JSON.stringify({'refresh': refresh}),
         contentType: "application/json; charset=utf-8",
         dataType: "json",

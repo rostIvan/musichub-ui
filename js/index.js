@@ -1,13 +1,3 @@
-$('#lessons-container').on('click', '.like-icons', (e) => {
-    let id = getLessonId(e);
-    alert(id);
-});
-
-$('#lessons-container').on('click', '.edit-icons', (e) => {
-    let id = getLessonId(e);
-    alert(id);
-});
-
 loadLessonsPage();
 
 $(window).scroll(function () {
@@ -16,8 +6,43 @@ $(window).scroll(function () {
     }
 });
 
+$('#lessons-container').on('click', '.like-icons', (e) => {
+    let id = getLessonId(e);
+    likeToggle(id)
+});
+
+$('#lessons-container').on('click', '.edit-icons', (e) => {
+    let id = getLessonId(e);
+    alert(id);
+});
+
+
+function addLike(id) {
+    let selector = `#like-icon_${id}`;
+    console.log(selector);
+    $(selector).addClass('primary-purple');
+    console.log('add')
+}
+
+function removeLike(id) {
+    $(`#like-icon_${id}`).removeClass('primary-purple');
+    console.log('remove')
+}
+
+function likeToggle(id) {
+    $.ajax({
+        type: "POST",
+        headers: optionalJWT(),
+        url: `${baseUrl}/lessons/${id}/likes/`,
+        statusCode: {
+            201: () => { addLike(id) },
+            204: () => { removeLike(id) }
+        }
+    })
+}
+
 function loadLessonsPage(url) {
-    let lessonUrl = url == null ? baseUrl + `lessons/?page=1` : url;
+    let lessonUrl = url == null ? `${baseUrl}/lessons/?page=1` : url;
     $.ajax({
         type: "GET",
         url: lessonUrl,
@@ -73,7 +98,7 @@ function buildCard(lessonId, title, user, likesCount, like, mine) {
                     </div>`;
 
     let editHTML = `${mine ? `<i id="edit-icon_${lessonId}" class="edit-icons material-icons">edit</i>` : ''}`;
-    let likeHTML = `<i id="{like-icon_${lessonId}" 
+    let likeHTML = `<i id="like-icon_${lessonId}" 
                         class="like-icons material-icons ${like ? 'primary-purple' : ''}">favorite</i> ${likesCount}`;
     let stats = editHTML + likeHTML;
 

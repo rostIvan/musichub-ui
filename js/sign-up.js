@@ -20,7 +20,7 @@ $('#sign-up-btn').click(function () {
 function signUpCall(email, password, success, error) {
     $.ajax({
         type: "POST",
-        url: baseUrl + 'auth/sign-up/',
+        url: `${baseUrl}/auth/sign-up/`,
         data: JSON.stringify({'email': email, 'password': password}),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
