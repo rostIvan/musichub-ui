@@ -57,6 +57,23 @@ lessonIcons.on('click', '.edit-icons', (e) => {
 });
 
 
+lessonIcons.on('click', '.delete-icons', (e) => {
+    let id = getLessonId(e);
+    $.ajax({
+        type: "DELETE",
+        headers: optionalJWT(),
+        url: `${baseUrl}/lessons/${id}/`,
+        success: () => {
+            removeLesson(id);
+            console.log(id)
+        },
+        error: (err) => {
+            console.log(err);
+            alert(err);
+        }
+    })
+});
+
 $('#preview-nav-item').click(() => {
     let {_, text} = lessonFormData();
     // Showdown usage:
@@ -112,7 +129,7 @@ function createLesson(title, text) {
         data: JSON.stringify({'title': title, 'text': text}),
         dataType: "json",
         success: (lesson) => {
-            console.log(lesson);
+            // console.log(lesson);
             startInsertLessonRow(
                 lesson['id'], lesson['title'], lesson['user']['email'],
                 lesson['likes_count'], lesson['like'], lesson['mine']
@@ -145,6 +162,11 @@ function updateLesson(id, title, text) {
         }
     })
 }
+
+function removeLesson(id) {
+    $(`#card_${id}`).remove()
+}
+
 
 function updateLessonRow(id, title) {
     $(`#lesson-title_${id}`).text(title)
@@ -198,6 +220,7 @@ function optionalJWT() {
 function cardDiv(lessonId, title, user, likesCount, like, mine) {
     let card = document.createElement('div');
     card.className = 'card';
+    card.id = `card_${lessonId}`;
     card.innerHTML = buildCard(lessonId, title, user, likesCount, like, mine);
     return card;
 }
@@ -207,15 +230,22 @@ function buildCard(lessonId, title, user, likesCount, like, mine) {
     let editHTML = '<div class="edit-icons">' +
         `${mine ? `<i id="edit-icon_${lessonId}" class="material-icons">edit</i>` : ''}` +
         '</div>';
-    let likeHTML = `<div class="like-icons">` +
+    let likeHTML = `<div class="like-icons mr-2">` +
         `<i id="like-icon_${lessonId}" class="material-icons ${like ? 'primary-purple' : ''}">favorite</i>
                             <span id="likes-count_${lessonId}"> ${likesCount} </span>` +
         '</div>';
+    let deleteHTML = mine ? `<div class="delete-icons">` +
+        `<i id="remove-icon_${lessonId}" class="material-icons">close</i>` +
+        `</div>` : '';
 
     return `<div class="card-body ">
-                <h4 class="card-title">
-                    <a href="${ref}" id="lesson-title_${lessonId}">${title}</a>
-                </h4>
+                <div class="row">
+                    <div class="col">
+                        <h4 class="card-title">
+                            <a href="${ref}" id="lesson-title_${lessonId}">${title}</a>
+                        </h4>
+                    </div>
+                </div>
             </div>
             <div class="card-footer ">
                 <div class="author">
@@ -225,7 +255,7 @@ function buildCard(lessonId, title, user, likesCount, like, mine) {
                     </a>
                 </div>
                 <div class="stats ml-auto noselect">
-                    ${editHTML + likeHTML}
+                    ${likeHTML + editHTML + deleteHTML}
                 </div>
             </div>`;
 }
