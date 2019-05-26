@@ -54,7 +54,7 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a href="../html/sign-in.html" class="nav-link">
+                        <a href="../html/sign-in.html" class="nav-link" id="logout">
                             <i class="material-icons">exit_to_app</i> Logout
                         </a>
                     </li>
@@ -103,7 +103,13 @@
         <!-- =============================================================================  -->
         <!-- Content  -->
         <div id="content" class="p-lg">
-            <h3 class="title">Lessons</h3>
+            <div class="row">
+                <div class="col text-center">
+                    <button id="lesson-add-btn" class="title btn btn-primary btn-fab btn-round d-none">
+                        <i class="material-icons">add</i>
+                    </button>
+                </div>
+            </div>
 
             <div id="lessons-container" class="row">
                 <!- Lessons here --->
@@ -112,6 +118,27 @@
         </div>
     </div>
 </div>
+
+<!-- Small modal -->
+<div id="sm-modal-window" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sm-model-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="sm-model-body">
+                <p>Modal body text goes here.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
 
 

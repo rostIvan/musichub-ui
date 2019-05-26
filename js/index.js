@@ -1,23 +1,43 @@
-loadLessonsPage();
+let nextPage = null;
+let lessonIcons = $('#lessons-container');
+let lessonAddBtn = $('#lesson-add-btn');
+
+
+loadLessonsPage(`${baseUrl}/lessons/?page=1`);
+
+if (isAuthenticated()) {
+    lessonAddBtn.removeClass('d-none');
+}
 
 $(window).scroll(function () {
-    if ($(window).scrollTop() + $(window).height() > $(document).height() - 1) {
-        console.log('end11');
+    if (scrolledToDown()) {
+        paginate(nextPage)
     }
 });
 
-$('#lessons-container').on('click', '.like-icons', (e) => {
+lessonAddBtn.click(() => {
+   alert('Add')
+});
+
+lessonIcons.on('click', '.like-icons', (e) => {
     let id = getLessonId(e);
     if (id != null) {
         likeToggle(id)
     }
 });
 
-$('#lessons-container').on('click', '.edit-icons', (e) => {
+lessonIcons.on('click', '.edit-icons', (e) => {
     let id = getLessonId(e);
     alert(id);
 });
 
+
+function paginate(next) {
+    if (next != null) {
+        console.log('paginate');
+        loadLessonsPage(next);
+    }
+}
 
 function addLike(id) {
     $(`#like-icon_${id}`).addClass('primary-purple');
@@ -39,31 +59,29 @@ function likeToggle(id) {
         headers: optionalJWT(),
         url: `${baseUrl}/lessons/${id}/likes/`,
         statusCode: {
-            201: () => { addLike(id) },
-            204: () => { removeLike(id) }
+            201: () => {
+                addLike(id)
+            },
+            204: () => {
+                removeLike(id)
+            }
         }
     })
 }
 
 function loadLessonsPage(url) {
-    let lessonUrl = url == null ? `${baseUrl}/lessons/?page=1` : url;
     $.ajax({
         type: "GET",
-        url: lessonUrl,
+        url: url,
         headers: optionalJWT(),
         dataType: "json",
         success: function (data) {
             console.log(data);
-            let lessons = data['results'];
-            lessons.forEach((lesson) => {
-                // console.log(lesson);
+            nextPage = data['next'];
+            data['results'].forEach((lesson) => {
                 addLessonRow(
-                    lesson['id'],
-                    lesson['title'],
-                    lesson['user']['email'],
-                    lesson['likes_count'],
-                    lesson['like'],
-                    lesson['mine']
+                    lesson['id'], lesson['title'], lesson['user']['email'],
+                    lesson['likes_count'], lesson['like'], lesson['mine']
                 )
             })
         },
@@ -75,11 +93,10 @@ function loadLessonsPage(url) {
 }
 
 function addLessonRow(lessonId, title, user, likesCount, like, mine) {
-    let lessons = document.getElementById('lessons-container');
-    let div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = buildCard(lessonId, title, user, likesCount, like, mine);
-    lessons.appendChild(div);
+    let card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = buildCard(lessonId, title, user, likesCount, like, mine);
+    $('#lessons-container').append(card);
 }
 
 function optionalJWT() {
@@ -95,23 +112,24 @@ function optionalJWT() {
 }
 
 function buildCard(lessonId, title, user, likesCount, like, mine) {
-    let editHTML ='<div class="edit-icons">' +
-                        `${mine ? `<i id="edit-icon_${lessonId}" class="material-icons">edit</i>` : ''}` +
-                    '</div>';
+    let ref = `../html/lesson.html#${lessonId}`;
+    let editHTML = '<div class="edit-icons">' +
+        `${mine ? `<i id="edit-icon_${lessonId}" class="material-icons">edit</i>` : ''}` +
+        '</div>';
     let likeHTML = `<div class="like-icons">` +
-                        `<i id="like-icon_${lessonId}" class="material-icons ${like ? 'primary-purple' : ''}">favorite</i>
+        `<i id="like-icon_${lessonId}" class="material-icons ${like ? 'primary-purple' : ''}">favorite</i>
                             <span id="likes-count_${lessonId}"> ${likesCount} </span>` +
-                    '</div>';
+        '</div>';
 
     return `<div class="card-body ">
                 <h4 class="card-title">
-                    <a href="#">${title}</a>
+                    <a href="${ref}">${title}</a>
                 </h4>
             </div>
             <div class="card-footer ">
                 <div class="author">
-                    <a href="#">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/67/User_Avatar.png" alt="avatar" class="avatar img-raised">
+                    <a href="${ref}">
+                        <i class="material-icons">account_circle</i>
                         <span>${user}</span>
                     </a>
                 </div>
@@ -121,8 +139,11 @@ function buildCard(lessonId, title, user, likesCount, like, mine) {
             </div>`;
 }
 
-
 function getLessonId(e) {
     [_, id] = e.target.id.split('_');
     return id
+}
+
+function scrolledToDown() {
+    return $(window).scrollTop() + $(window).height() > $(document).height() - 1;
 }
