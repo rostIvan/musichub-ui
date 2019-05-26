@@ -1,6 +1,7 @@
 let nextPage = null;
 let lessonIcons = $('#lessons-container');
 let lessonAddBtn = $('#lesson-add-btn');
+let lessonSaveBtn = $('#lesson-save-btn');
 
 
 loadLessonsPage(`${baseUrl}/lessons/?page=1`);
@@ -16,7 +17,15 @@ $(window).scroll(function () {
 });
 
 lessonAddBtn.click(() => {
-   alert('Add')
+    $('#lg-modal-window').modal()
+});
+
+
+lessonSaveBtn.click(() => {
+    let {title, text} = createLessonFormData();
+    // console.log('Title: ' + title);
+    // console.log('Text: ' + text);
+    createLesson(title, text)
 });
 
 lessonIcons.on('click', '.like-icons', (e) => {
@@ -29,6 +38,11 @@ lessonIcons.on('click', '.like-icons', (e) => {
 lessonIcons.on('click', '.edit-icons', (e) => {
     let id = getLessonId(e);
     alert(id);
+});
+
+$('#preview-nav-item').click(() => {
+    let {_, text} = createLessonFormData();
+    $('#preview-container').html(text);
 });
 
 
@@ -69,13 +83,37 @@ function likeToggle(id) {
     })
 }
 
+
+function createLesson(title, text) {
+    $.ajax({
+        type: "POST",
+        url: `${baseUrl}/lessons/`,
+        headers: optionalJWT(),
+        data: JSON.stringify({'title': title, 'text': text}),
+        dataType: "json",
+        success: (lesson) => {
+            console.log(lesson);
+            startInsertLessonRow(
+                lesson['id'], lesson['title'], lesson['user']['email'],
+                lesson['likes_count'], lesson['like'], lesson['mine']
+            );
+            $('.modal-body').find('textarea,input').val('');
+            $('#lg-modal-window').modal('hide')
+        },
+        error: (err) => {
+            console.log(err);
+            alert(err)
+        }
+    })
+}
+
 function loadLessonsPage(url) {
     $.ajax({
         type: "GET",
         url: url,
         headers: optionalJWT(),
         dataType: "json",
-        success: function (data) {
+        success: (data) => {
             console.log(data);
             nextPage = data['next'];
             data['results'].forEach((lesson) => {
@@ -85,7 +123,7 @@ function loadLessonsPage(url) {
                 )
             })
         },
-        error: function (err) {
+        error: (err) => {
             console.log(err);
             updateAccessToken();
         }
@@ -93,10 +131,13 @@ function loadLessonsPage(url) {
 }
 
 function addLessonRow(lessonId, title, user, likesCount, like, mine) {
-    let card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = buildCard(lessonId, title, user, likesCount, like, mine);
+    let card = cardDiv(lessonId, title, user, likesCount, like, mine);
     $('#lessons-container').append(card);
+}
+
+function startInsertLessonRow(lessonId, title, user, likesCount, like, mine) {
+    let card = cardDiv(lessonId, title, user, likesCount, like, mine);
+    $('#lessons-container').prepend((card));
 }
 
 function optionalJWT() {
@@ -109,6 +150,13 @@ function optionalJWT() {
         };
     }
     return {}
+}
+
+function cardDiv(lessonId, title, user, likesCount, like, mine) {
+    let card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = buildCard(lessonId, title, user, likesCount, like, mine);
+    return card;
 }
 
 function buildCard(lessonId, title, user, likesCount, like, mine) {
@@ -144,6 +192,16 @@ function getLessonId(e) {
     return id
 }
 
+function createLessonFormData() {
+    let title = $("input[name='lesson-title']").val();
+    let text = $("textarea[name='lesson-text']").val();
+    return {title, text};
+}
+
 function scrolledToDown() {
     return $(window).scrollTop() + $(window).height() > $(document).height() - 1;
 }
+
+// $('#lg-modal-window').on('hidden.bs.modal', () => {
+//     $('.modal-body').find('textarea,input').val('');
+// });
