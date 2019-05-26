@@ -59,7 +59,10 @@ lessonIcons.on('click', '.edit-icons', (e) => {
 
 $('#preview-nav-item').click(() => {
     let {_, text} = lessonFormData();
-    $('#preview-container').html(text);
+    // Showdown usage:
+    let converter = new showdown.Converter();
+    let html = converter.makeHtml(text);
+    $('#preview-container').html(html);
 });
 
 
