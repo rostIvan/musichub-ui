@@ -18,7 +18,78 @@
 </head>
 
 <body>
-<h1>hello</h1>
+
+
+<nav class="navbar navbar-expand-lg bg-primary">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="./index.html">musichub</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse justify-content-end">
+
+            <div id="unauthorized-navbar">
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="../html/sign-up.html" class="nav-link">
+                                <i class="material-icons">person_add</i> Sign up
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../html/sign-in.html" class="nav-link">
+                                <i class="material-icons">open_in_new</i> Sign in
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="authorized-navbar">
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="../html/sign-in.html" class="nav-link" id="logout">
+                                <i class="material-icons">exit_to_app</i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+
+<div class="main main-raised mt-2">
+    <div class="container p-4">
+        <!-- =============================================================================  -->
+        <!-- Content  -->
+        <div id="content" class="p-2">
+            <div id="header-content" class="row">
+                <div class="col text-left">
+                    <h3 id="title-text">Title: </h3>
+                    <h4 id="author-text">Author: </h4>
+                </div>
+            </div>
+            <hr>
+            <div id="lesson-content" class="row">
+                <div class="col ml-2">
+                    <p id="lesson-text" ></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 

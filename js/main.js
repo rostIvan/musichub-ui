@@ -77,6 +77,19 @@ function clearTokenPairs() {
     localStorage.removeItem('refresh-token');
 }
 
+function optionalJWT() {
+    let accessToken = localStorage.getItem('access-token');
+    // console.log({'access': accessToken});
+    if (accessToken != null) {
+        return {
+            'Authorization': `JWT ${accessToken}`,
+            'Content-Type': 'application/json'
+        };
+    }
+    return {}
+}
+
+
 function apiCall(accessToken, request) {
     let onSuccess = request['success'];
     let onError = request['error'];

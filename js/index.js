@@ -205,18 +205,6 @@ function startInsertLessonRow(lessonId, title, user, likesCount, like, mine) {
     $('#lessons-container').prepend((card));
 }
 
-function optionalJWT() {
-    let accessToken = localStorage.getItem('access-token');
-    // console.log({'access': accessToken});
-    if (accessToken != null) {
-        return {
-            'Authorization': `JWT ${accessToken}`,
-            'Content-Type': 'application/json'
-        };
-    }
-    return {}
-}
-
 function cardDiv(lessonId, title, user, likesCount, like, mine) {
     let card = document.createElement('div');
     card.className = 'card';
